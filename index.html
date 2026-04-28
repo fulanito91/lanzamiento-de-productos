@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Lanzamiento de Productos</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: #111827;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #374151;
+    }
+
+    .question-box {
+      margin-top: 25px;
+    }
+
+    .question-count {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .option {
+      display: block;
+      width: 100%;
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      color: #111827;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .option:hover {
+      background: #e5e7eb;
+    }
+
+    .correct {
+      background: #d1fae5 !important;
+      border-color: #10b981 !important;
+    }
+
+    .incorrect {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .score {
+      font-size: 34px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .small {
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .restart {
+      margin-top: 20px;
+      background: #2563eb;
+    }
+
+    .restart:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="card">
+      <h1>Test Lanzamiento de Productos</h1>
+      <p class="subtitle">Preguntas tipo examen por UF</p>
+
+      <div id="inicio">
+        <select id="temaSelect">
+          <option value="">Selecciona un tema</option>
+        </select>
+        <button onclick="iniciarTest()">Empezar test</button>
+      </div>
+
+      <div id="test" class="hidden">
+        <div class="question-count" id="contador"></div>
+        <div class="question" id="pregunta"></div>
+        <div id="opciones"></div>
+      </div>
+
+      <div id="resultado" class="result hidden">
+        <div class="score" id="puntuacion"></div>
+        <p class="small" id="mensajeFinal"></p>
+        <button class="restart" onclick="reiniciar()">Volver a empezar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const temas = [
+      {
+        tema: "UF1 - Lanzamiento de productos",
+        preguntas: [
+          {
+            pregunta: "Un CRM analítico se utiliza principalmente para:",
+            opciones: [
+              "Desarrollar el producto.",
+              "Predecir el comportamiento de los clientes.",
+              "Análisis financiero.",
+              "Desarrollo web."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes afirmaciones sobre el desarrollo de nuevos productos es FALSA?",
+            opciones: [
+              "La prueba de concepto permite evaluar la viabilidad del producto.",
+              "La comercialización es la última fase.",
+              "La generación de ideas es la primera fase.",
+              "El análisis DAFO no es relevante en esta etapa."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "Las debilidades en un análisis DAFO se refieren a:",
+            opciones: [
+              "Factores externos que pueden afectar a la empresa.",
+              "Aspectos negativos internos de la empresa.",
+              "Oportunidades de crecimiento en el mercado.",
+              "Aspectos positivos internos de la empresa."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "Un estudio de mercado realizado por una empresa para conocer las preferencias de sus clientes es un ejemplo de:",
+            opciones: [
+              "Fuente de información externa primaria.",
+              "Fuente de información interna primaria.",
+              "Fuente de información externa secundaria.",
+              "Fuente de información interna secundaria."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál de las siguientes herramientas es más útil para gestionar las relaciones con los clientes y analizar su comportamiento?",
+            opciones: [
+              "CRM.",
+              "Software de contabilidad.",
+              "Hoja de cálculo.",
+              "Base de datos."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál de las siguientes fases del desarrollo de un nuevo producto implica la creación de un prototipo?",
+            opciones: [
+              "Prueba de concepto.",
+              "Comercialización.",
+              "Desarrollo de marketing.",
+              "Generación de ideas."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "Un análisis DAFO puede ayudar a una empresa a:",
+            opciones: [
+              "Predecir con exactitud las tendencias futuras del mercado.",
+              "Identificar sus fortalezas y debilidades para tomar mejores decisiones.",
+              "Garantizar el éxito de todos sus productos.",
+              "Eliminar por completo los riesgos del mercado."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes opciones NO es un ejemplo de fuente de información interna?",
+            opciones: [
+              "Encuestas a empleados.",
+              "Informes de gastos.",
+              "Artículos de prensa especializada.",
+              "Datos de ventas."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es la principal función de un CRM?",
+            opciones: [
+              "Gestionar las relaciones con los clientes.",
+              "Gestionar las finanzas de una empresa.",
+              "Gestionar la cadena de suministro.",
+              "Gestionar la producción de una empresa."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es el objetivo principal de la fase de mercado de pruebas?",
+            opciones: [
+              "Lanzar el producto al mercado.",
+              "Evaluar la viabilidad comercial del producto.",
+              "Desarrollar un prototipo del producto.",
+              "Definir la estrategia de marketing."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de los siguientes NO es un factor externo que se analiza en un DAFO?",
+            opciones: [
+              "Cambios en la legislación.",
+              "Tendencias del mercado.",
+              "Cultura organizacional.",
+              "Competencia."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "En un análisis DAFO, las oportunidades representan:",
+            opciones: [
+              "Factores internos que pueden mejorar la posición de la empresa.",
+              "Factores externos que pueden beneficiar a la empresa.",
+              "Factores externos que pueden perjudicar a la empresa.",
+              "Factores externos que pueden beneficiar a la empresa."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes NO es una fuente de información interna?",
+            opciones: [
+              "Encuestas a clientes.",
+              "Ficheros de clientes.",
+              "Artículos de revistas especializadas.",
+              "Informes de venta."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es la primera fase en el desarrollo de un nuevo producto?",
+            opciones: [
+              "Generación de ideas.",
+              "Prueba de concepto.",
+              "Desarrollo del producto.",
+              "Comercialización."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "Las fuentes de información primaria se caracterizan por:",
+            opciones: [
+              "Ser datos procesados y analizados previamente.",
+              "Provenir de fuentes externas a la empresa.",
+              "Ser datos originales y sin procesar.",
+              "Ser recopiladas exclusivamente a través de encuestas."
+            ],
+            correcta: 2
+          }
+        ]
+      },
+
+      {
+        tema: "UF2 - Comercialización y argumentario de ventas",
+        preguntas: [
+          {
+            pregunta: "¿Cuál es una ventaja clave del uso de la red de ventas externa?",
+            opciones: [
+              "Mayor control sobre los vendedores.",
+              "Ampliación del alcance a nuevos mercados.",
+              "Eliminar la necesidad de un equipo comercial interno.",
+              "Reducción de costes de marketing."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál es una característica principal de la omnicanalidad?",
+            opciones: [
+              "Experiencia unificada a través de múltiples canales.",
+              "Centrarse en la reducción de costes operativos.",
+              "Uso exclusivo de tiendas físicas.",
+              "Estrategias de venta enfocadas en campañas publicitarias."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es una de las ventajas de elaborar un argumentario de ventas?",
+            opciones: [
+              "Evita que los vendedores tengan que interactuar con los clientes.",
+              "Garantiza que todos los productos se vendan automáticamente.",
+              "Mejora y ayuda a la preparación para responder a objeciones y dudas.",
+              "Permite diseñar campañas publicitarias sin análisis previo."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué canal de comercialización conecta directamente al fabricante con el cliente final?",
+            opciones: [
+              "Fabricante.",
+              "Minorista.",
+              "Comercio electrónico.",
+              "Mayorista."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es el propósito del briefing de producto?",
+            opciones: [
+              "Analizar las ventas históricas de la empresa.",
+              "Detallar los costes de fabricación.",
+              "Recoger información clave para el lanzamiento de un producto.",
+              "Sustituir al argumentario de ventas."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué herramienta digital ayuda a gestionar las relaciones personalizadas con los clientes?",
+            opciones: [
+              "Analizadores de mercado.",
+              "Generadores de contenido automáticos.",
+              "Customer Relationship Management, CRM.",
+              "Excel."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué es un argumentario de ventas?",
+            opciones: [
+              "Un documento para anotar la contabilidad.",
+              "Un guion rígido que los vendedores deben seguir.",
+              "Una herramienta estratégica para facilitar la interacción con clientes.",
+              "Una base de datos de productos disponibles."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "La diferenciación de producto horizontal NO se caracteriza por:",
+            opciones: [
+              "Diferenciación por calidad.",
+              "Depende de las preferencias del consumidor.",
+              "Diferenciación basada en la variedad.",
+              "Influyen el color, la textura, el formato, el tamaño, la localización, etc."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué método de formación combina teoría con talleres prácticos?",
+            opciones: [
+              "Cursos en línea.",
+              "Seminarios.",
+              "Chatbots interactivos.",
+              "Conferencia."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué estrategia se basa en fijar el precio según el valor percibido por el cliente?",
+            opciones: [
+              "Penetración de mercado.",
+              "Descremado.",
+              "Skimming.",
+              "Precio de valor."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué estrategia de precios establece un precio alto al inicio y lo reduce progresivamente?",
+            opciones: [
+              "Basado en la competencia.",
+              "Skimming o descremado.",
+              "Penetración de mercado.",
+              "Precios psicológicos."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál es la etapa inicial del ciclo de vida del producto?",
+            opciones: [
+              "Madurez.",
+              "Declive.",
+              "Introducción.",
+              "Crecimiento."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué caracteriza la etapa de madurez en el ciclo de vida de un producto?",
+            opciones: [
+              "Ventas estabilizadas con crecimiento lento o nulo.",
+              "Baja demanda y necesidad de relanzamiento.",
+              "Aumento significativo de las ventas iniciales.",
+              "Investigación y desarrollo del producto."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué característica define al producto aumentado?",
+            opciones: [
+              "Sus innovaciones futuras, aún no implementadas.",
+              "Su función básica, como satisfacer una necesidad esencial.",
+              "Sus características tangibles, como el diseño.",
+              "Los beneficios adicionales, como la garantía o el servicio posventa."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué elemento pertenece al producto real?",
+            opciones: [
+              "Diseño y envase.",
+              "Garantía.",
+              "Servicio posventa.",
+              "Actualizaciones futuras."
+            ],
+            correcta: 0
+          }
+        ]
+      },
+
+      {
+        tema: "UF3 - Promoción y marketing directo",
+        preguntas: [
+          {
+            pregunta: "¿Cuál es el objetivo principal de las acciones promocionales en el punto de venta?",
+            opciones: [
+              "Reducir los costes de distribución.",
+              "Mejorar la imagen corporativa.",
+              "Incrementar la fidelidad del cliente.",
+              "Motivar la acción inmediata del consumidor."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué caracteriza a las promociones en especie?",
+            opciones: [
+              "Se basan en descuentos directos.",
+              "Ofrecen productos adicionales al consumidor.",
+              "Incluyen publicidad exterior.",
+              "Se limitan a campañas digitales."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué estrategia promocional busca captar consumidores sensibles a ofertas limitadas?",
+            opciones: [
+              "Publicidad en streaming.",
+              "Promociones por tiempo limitado.",
+              "Relaciones públicas.",
+              "Promociones selectivas."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué estrategia promocional combina productos complementarios para potenciar la compra inicial?",
+            opciones: [
+              "Rebajas.",
+              "Promoción en especie.",
+              "Venta cruzada.",
+              "Cupones de descuento."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es un ejemplo de promoción selectiva dirigida a un segmento específico?",
+            opciones: [
+              "Campañas para todo el público.",
+              "Anuncios en medios tradicionales.",
+              "Descuento exclusivo para jóvenes de una región.",
+              "Ofertas generales en redes sociales."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es un ejemplo de promoción del intermediario?",
+            opciones: [
+              "Demostraciones de producto en un supermercado.",
+              "Redes sociales.",
+              "Cupones de descuento para clientes.",
+              "Publicidad en motores de búsqueda."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué tipo de publicidad está diseñada para captar al consumidor en el momento de la compra?",
+            opciones: [
+              "Publicidad exterior.",
+              "Publicidad en televisión.",
+              "Publicidad en el punto de venta.",
+              "Publicidad en medios digitales."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué herramienta utiliza incentivos como descuentos o muestras gratuitas para generar ventas rápidas?",
+            opciones: [
+              "Promoción de ventas.",
+              "Relaciones públicas.",
+              "Publicidad.",
+              "Merchandising."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué tipo de promoción es ideal para aumentar la percepción de valor en productos sin afectar el precio?",
+            opciones: [
+              "Descuentos por volumen.",
+              "Rebajas por temporada.",
+              "Venta cruzada.",
+              "Promoción en especie."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué técnica utiliza Amazon para personalizar la experiencia de compra del usuario?",
+            opciones: [
+              "Recomendaciones basadas en el historial de navegación.",
+              "Publicidad convencional.",
+              "Anuncios en televisión.",
+              "Folletos en punto de venta."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es el principal objetivo del merchandising?",
+            opciones: [
+              "Desarrollar promociones en línea.",
+              "Aumentar la visibilidad del producto en el punto de venta.",
+              "Incrementar la fidelidad del cliente.",
+              "Reducir los costes de inventario."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes acciones NO está dirigida al consumidor final?",
+            opciones: [
+              "Negociaciones con distribuidores.",
+              "Rebajas por temporada.",
+              "Muestras gratuitas.",
+              "Venta cruzada."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué técnica fomenta la fidelidad del cliente a través de beneficios exclusivos?",
+            opciones: [
+              "Publicidad programática.",
+              "Publicidad en medios digitales.",
+              "Descuentos generales.",
+              "Ventajas como tarjetas de puntos."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué herramienta permite a las empresas gestionar campañas publicitarias en tiempo real?",
+            opciones: [
+              "Relaciones públicas.",
+              "Programática.",
+              "Anuncios en prensa.",
+              "Merchandising."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué característica define al marketing directo?",
+            opciones: [
+              "Campañas centradas en la fidelización.",
+              "Comunicación personalizada con respuesta inmediata.",
+              "Anuncios masivos en medios digitales.",
+              "Promoción a través de intermediarios."
+            ],
+            correcta: 1
+          }
+        ]
+      },
+
+      {
+        tema: "UF4 - Estrategia comercial y punto de venta",
+        preguntas: [
+          {
+            pregunta: "¿Qué factor es esencial en la implantación del lineal?",
+            opciones: [
+              "Solo utilizar criterios estéticos en la disposición.",
+              "Ajustarse a la naturaleza de los productos y la estructura del local.",
+              "Mantener los productos menos visibles para promover su exclusividad.",
+              "Reducir los espacios asignados para los productos."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes opciones NO es un componente de una estrategia comercial en línea?",
+            opciones: [
+              "Marketing de influenciadores.",
+              "Publicidad en periódicos.",
+              "Marketing por correo electrónico.",
+              "SEO."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué herramienta permite personalizar la comunicación con clientes?",
+            opciones: [
+              "Publicidad programática.",
+              "Optimización del lineal.",
+              "CRM.",
+              "Marketing de contenidos."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál de las siguientes es una acción clave para fidelizar clientes?",
+            opciones: [
+              "Enfocarse exclusivamente en captar nuevos clientes.",
+              "Reducir la atención al cliente para ahorrar costes.",
+              "Crear programas de recompensas personalizados.",
+              "Ignorar el feedback del cliente tras la compra."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es el objetivo de una estrategia de visibilidad en el punto de venta?",
+            opciones: [
+              "Aumentar la notoriedad de los productos en el establecimiento.",
+              "Maximizar los precios de los productos promocionados.",
+              "Reducir el tamaño del lineal de exhibición.",
+              "Simplificar el diseño del local comercial."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es el propósito principal de una estrategia comercial?",
+            opciones: [
+              "Desarrollar nuevos productos.",
+              "Incrementar la cuota de mercado, las ventas y los clientes.",
+              "Reducir costes operativos.",
+              "Mejorar la relación con los proveedores."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué característica define una estrategia promocional persuasiva?",
+            opciones: [
+              "Mantener el producto en la mente del cliente.",
+              "Seducir al cliente para que elija un producto entre opciones similares.",
+              "Informar a los consumidores sobre el producto.",
+              "Mostrar datos técnicos del producto de manera detallada."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué permite un briefing de lanzamiento bien estructurado?",
+            opciones: [
+              "Asegurar una presentación clara y relevante del producto.",
+              "Limitar el acceso de los equipos a las estrategias comerciales.",
+              "Simplificar las estrategias de marketing al reducir detalles.",
+              "Generar información extensa para los equipos internos."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es una ventaja de la fidelización del cliente?",
+            opciones: [
+              "Permite abandonar el uso de estrategias promocionales.",
+              "Incrementa los gastos operativos.",
+              "Reduce los costes de captación de nuevos clientes.",
+              "Aumenta la visibilidad en redes sociales."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es una de las ventajas de una estrategia comercial en línea?",
+            opciones: [
+              "Limitar el alcance a un público local.",
+              "Segmentación precisa y resultados medibles.",
+              "Reducir la relevancia de las estrategias tradicionales.",
+              "Generar mayor interacción en medios impresos."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué define una estrategia comercial tradicional?",
+            opciones: [
+              "Segmentación avanzada basada en datos.",
+              "Automatización de procesos en tiempo real.",
+              "Uso de canales masivos como prensa o televisión.",
+              "Optimización de campañas en redes sociales."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es un ejemplo de una acción promocional efectiva en un punto de venta?",
+            opciones: [
+              "Publicar un anuncio en una red social.",
+              "Cambiar el logo de la empresa.",
+              "Ofrecer descuentos exclusivos en el establecimiento.",
+              "Rediseñar la estructura interna del local."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué aspecto caracteriza una implantación cruzada en el lineal?",
+            opciones: [
+              "Ordenar productos por sus características principales.",
+              "Disponer productos de la misma familia en todos los niveles verticales.",
+              "Colocar productos de diferentes secciones que se complementan.",
+              "Colocar productos de la misma categoría a un solo nivel horizontal."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Qué caracteriza a un plan de marketing bien elaborado?",
+            opciones: [
+              "Solo se enfoca en estrategias digitales.",
+              "Es un documento rígido y no se actualiza.",
+              "Incluye únicamente una lista de productos para comercializar.",
+              "Define estrategias alineadas con los objetivos de la empresa."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué elemento fomenta la fidelización del cliente?",
+            opciones: [
+              "Ignorar las opiniones de los clientes.",
+              "Disminuir la inversión en marketing.",
+              "Incentivos financieros para la competencia.",
+              "Programas de recompensas y descuentos."
+            ],
+            correcta: 3
+          }
+        ]
+      },
+
+      {
+        tema: "UF5 - Control, analítica y tienda online",
+        preguntas: [
+          {
+            pregunta: "¿Qué indica una baja tasa de conversión en una tienda en línea?",
+            opciones: [
+              "Que los clientes no encuentran atractivo el producto o la web.",
+              "Que los anuncios tienen demasiado impacto.",
+              "Que el inventario del producto es insuficiente.",
+              "Que el tráfico en la web es muy alto."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué aspecto se debe optimizar en una tienda en línea para aumentar las ventas?",
+            opciones: [
+              "Procesos de compra más largos.",
+              "Diseño atractivo y navegación intuitiva.",
+              "Mayor cantidad de anuncios emergentes.",
+              "Eliminación de filtros de búsqueda."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes métricas es clave para evaluar el éxito de una tienda en línea?",
+            opciones: [
+              "Cantidad de visitas a la web sin compras.",
+              "Tasa de conversión.",
+              "Número de empleados en la empresa.",
+              "Número de proveedores del negocio."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué acción puede ayudar a reducir una alta tasa de rebote en una web?",
+            opciones: [
+              "Eliminar la información sobre los productos.",
+              "Obligar al usuario a registrarse antes de ver la web.",
+              "Aumentar la velocidad de carga.",
+              "Reducir el número de imágenes de los productos."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Dónde es recomendable mostrar recomendaciones de productos complementarios o de compra por impulso en el ámbito digital?",
+            opciones: [
+              "Página de inicio.",
+              "Página de política de privacidad.",
+              "Carrito y checkout.",
+              "En el sobre nosotros."
+            ],
+            correcta: 2
+          },
+          {
+            pregunta: "¿Cuál es el objetivo principal del control de implantación de un producto en el punto de venta?",
+            opciones: [
+              "Priorizar los productos con menor margen de beneficio.",
+              "Incrementar las ventas mediante una exposición estratégica.",
+              "Colocar los productos al azar en la tienda.",
+              "Asegurar que el producto tenga el menor precio posible."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de las siguientes estrategias ayuda a mejorar la tasa de conversión en una tienda en línea?",
+            opciones: [
+              "Usar imágenes de alta calidad en las fichas del producto.",
+              "Eliminar descripciones detalladas de los productos.",
+              "Aumentar el número de pasos en el proceso de compra.",
+              "Subir los precios sin justificación."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Cuál es una ventaja de analizar métricas digitales en una tienda en línea?",
+            opciones: [
+              "Evita la necesidad de crear campañas de marketing.",
+              "Permite realizar ajustes en tiempo real.",
+              "Garantiza automáticamente el éxito del negocio.",
+              "Hace innecesario el control del stock."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cuál de los siguientes es un indicador clave para medir la rentabilidad de una campaña de marketing digital?",
+            opciones: [
+              "Tasa de conversión.",
+              "Retorno de inversión, ROI.",
+              "Número de empleados en la empresa.",
+              "Coste por adquisición, CPA."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Qué indica el índice de rotación del stock?",
+            opciones: [
+              "La cantidad de proveedores del producto.",
+              "El número de empleados que manejan el inventario.",
+              "La cantidad de reseñas en redes sociales.",
+              "La cantidad de veces que un producto es reemplazado en un periodo."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué herramienta permite analizar el comportamiento de los usuarios en una web?",
+            opciones: [
+              "LinkedIn.",
+              "Microsoft Excel.",
+              "PowerPoint.",
+              "Google Analytics."
+            ],
+            correcta: 3
+          },
+          {
+            pregunta: "¿Qué es el planograma en una estrategia comercial?",
+            opciones: [
+              "Un diseño gráfico que indica la ubicación óptima de los productos.",
+              "Un informe de ventas semanales.",
+              "Una estrategia para subir precios.",
+              "Un documento donde se anotan los precios de los productos."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué representa la rentabilidad de un producto?",
+            opciones: [
+              "El total de ingresos generados por sus ventas.",
+              "El margen entre el precio de venta y el coste de producción.",
+              "La popularidad del producto en redes sociales.",
+              "La cantidad de unidades vendidas."
+            ],
+            correcta: 1
+          },
+          {
+            pregunta: "¿Cómo NO se clasifican los productos dentro de una tienda para mejorar su ubicación?",
+            opciones: [
+              "Por la preferencia del gerente.",
+              "Por acuerdos con el proveedor.",
+              "Por campañas promocionales.",
+              "Según el margen de beneficio y la demanda."
+            ],
+            correcta: 0
+          },
+          {
+            pregunta: "¿Qué permite identificar la analítica digital en una empresa?",
+            opciones: [
+              "La cantidad de reuniones realizadas en la empresa.",
+              "La efectividad de las estrategias de marketing y ventas.",
+              "La rotación del personal en la compañía.",
+              "El número de empleados necesarios en cada departamento."
+            ],
+            correcta: 1
+          }
+        ]
+      }
+    ];
+
+    const temaSelect = document.getElementById("temaSelect");
+    const inicio = document.getElementById("inicio");
+    const test = document.getElementById("test");
+    const resultado = document.getElementById("resultado");
+    const contador = document.getElementById("contador");
+    const preguntaTexto = document.getElementById("pregunta");
+    const opcionesDiv = document.getElementById("opciones");
+    const puntuacionTexto = document.getElementById("puntuacion");
+    const mensajeFinal = document.getElementById("mensajeFinal");
+
+    let preguntasActuales = [];
+    let preguntaActual = 0;
+    let puntuacion = 0;
+
+    temas.forEach((tema, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = tema.tema;
+      temaSelect.appendChild(option);
+    });
+
+    function iniciarTest() {
+      const temaElegido = temaSelect.value;
+
+      if (temaElegido === "") {
+        alert("Selecciona un tema primero.");
+        return;
+      }
+
+      preguntasActuales = temas[temaElegido].preguntas;
+      preguntaActual = 0;
+      puntuacion = 0;
+
+      inicio.classList.add("hidden");
+      resultado.classList.add("hidden");
+      test.classList.remove("hidden");
+
+      mostrarPregunta();
+    }
+
+    function mostrarPregunta() {
+      const pregunta = preguntasActuales[preguntaActual];
+
+      contador.textContent = `Pregunta ${preguntaActual + 1} de ${preguntasActuales.length}`;
+      preguntaTexto.textContent = pregunta.pregunta;
+      opcionesDiv.innerHTML = "";
+
+      pregunta.opciones.forEach((opcion, index) => {
+        const button = document.createElement("button");
+        button.classList.add("option");
+        button.textContent = opcion;
+        button.onclick = () => comprobarRespuesta(index, button);
+        opcionesDiv.appendChild(button);
+      });
+    }
+
+    function comprobarRespuesta(indexSeleccionado, botonSeleccionado) {
+      const pregunta = preguntasActuales[preguntaActual];
+      const botones = document.querySelectorAll(".option");
+
+      botones.forEach((boton, index) => {
+        boton.disabled = true;
+
+        if (index === pregunta.correcta) {
+          boton.classList.add("correct");
+        }
+
+        if (index === indexSeleccionado && index !== pregunta.correcta) {
+          boton.classList.add("incorrect");
+        }
+      });
+
+      if (indexSeleccionado === pregunta.correcta) {
+        puntuacion++;
+      }
+
+      setTimeout(() => {
+        preguntaActual++;
+
+        if (preguntaActual < preguntasActuales.length) {
+          mostrarPregunta();
+        } else {
+          mostrarResultado();
+        }
+      }, 900);
+    }
+
+    function mostrarResultado() {
+      test.classList.add("hidden");
+      resultado.classList.remove("hidden");
+
+      puntuacionTexto.textContent = `${puntuacion} / ${preguntasActuales.length}`;
+
+      const porcentaje = (puntuacion / preguntasActuales.length) * 100;
+
+      if (porcentaje >= 90) {
+        mensajeFinal.textContent = "Brutal. Lo llevas muy bien.";
+      } else if (porcentaje >= 70) {
+        mensajeFinal.textContent = "Bien, pero repasa las que falles.";
+      } else if (porcentaje >= 50) {
+        mensajeFinal.textContent = "Vas justo. Necesitas otra vuelta.";
+      } else {
+        mensajeFinal.textContent = "Hay que repasarlo bastante más.";
+      }
+    }
+
+    function reiniciar() {
+      resultado.classList.add("hidden");
+      inicio.classList.remove("hidden");
+      temaSelect.value = "";
+    }
+  </script>
+
+</body>
+</html>
